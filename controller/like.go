@@ -1,8 +1,10 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
+	"strconv"
+
 	"github.com/ashsajal1/go-tweet/model"
+	"github.com/gin-gonic/gin"
 )
 
 func CreateLike(c *gin.Context) {
@@ -56,7 +58,11 @@ func GetLike(c *gin.Context) {
 }
 
 func DeleteLike(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
 
 	var like model.Like
 	db, err := model.GetDB()
@@ -79,3 +85,4 @@ func DeleteLike(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "successfully deleted"})
 }
+
