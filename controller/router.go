@@ -1,18 +1,17 @@
-	package controller
+package controller
 
-	import (
-		"github.com/gin-gonic/gin"
-	)
-
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func SetupLikeRoute(r *gin.Engine) {
 	like := r.Group("/like")
 	{
 		like.POST("", CreateLike)
+		like.DELETE("/:id", DeleteLike)
 		like.GET("/:id", GetLike)
 	}
 }
-
 
 func SetupTweetRoute(r *gin.Engine) {
 	tweet := r.Group("/tweet")

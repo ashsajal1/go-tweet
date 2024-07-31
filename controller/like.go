@@ -18,7 +18,15 @@ func CreateLike(c *gin.Context) {
 		return
 	}
 
-	result := db.Create(&like)
+	// Check if tweet exists
+	var tweet model.Tweet
+	result := db.First(&tweet, like.TweetID)
+	if result.Error != nil {
+		c.JSON(404, gin.H{"error": "Tweet not found"})
+		return
+	}
+
+	result = db.Create(&like)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"error": result.Error.Error()})
 		return
@@ -26,6 +34,7 @@ func CreateLike(c *gin.Context) {
 
 	c.JSON(200, like)
 }
+
 
 func GetLike(c *gin.Context) {
 	id := c.Param("id")
