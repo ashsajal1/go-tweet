@@ -19,16 +19,21 @@ func main() {
 			"message": "Hello, World!",
 		})
 	})
-	
 
-	r.POST("/user", controller.CreateUser)
-	r.GET("/user/:id", controller.GetUser)
-	r.GET("/user/:id/tweets", controller.GetTweetsByUserID)
-	r.GET("/user", controller.GetUsers)
+	user := r.Group("/user")
+	{
+		user.POST("", controller.CreateUser)
+		user.GET("/:id", controller.GetUser)
+		user.GET("/:id/tweets", controller.GetTweetsByUserID)
+		user.GET("", controller.GetUsers)
+	}
 
-	r.POST("/tweet", controller.CreateTweet)
-	r.GET("/tweet/:id", controller.GetTweet)
-	r.GET("/tweet", controller.GetTweets)
+	tweet := r.Group("/tweet")
+	{
+		tweet.POST("", controller.CreateTweet)
+		tweet.GET("/:id", controller.GetTweet)
+		tweet.GET("", controller.GetTweets)
+	}
 
 	r.Run(":8080")
-}	
+}
