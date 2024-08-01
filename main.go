@@ -5,6 +5,7 @@ import (
 
 	"github.com/ashsajal1/go-tweet/controller"
 	"github.com/ashsajal1/go-tweet/model"
+	"github.com/ashsajal1/go-tweet/auth"
 )
 
 func init() {
@@ -20,6 +21,7 @@ func main() {
 		})
 	})
 
+	auth.SetupAuthRouter(r)
 	controller.SetupUserRoute(r)
 	controller.SetupTweetRoute(r)
 	controller.SetupLikeRoute(r)
