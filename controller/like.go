@@ -28,6 +28,14 @@ func CreateLike(c *gin.Context) {
 		return
 	}
 
+	// Check if Like already exists
+	var existingLike model.Like
+	result = db.Where("user_id = ? AND tweet_id = ?", like.UserID, like.TweetID).First(&existingLike)
+	if result.Error == nil {
+		c.JSON(400, gin.H{"error": "Like already exists"})
+		return
+	}
+
 	result = db.Create(&like)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"error": result.Error.Error()})
