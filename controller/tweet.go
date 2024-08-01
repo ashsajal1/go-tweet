@@ -1,9 +1,12 @@
 package controller
 
-
 import (
-	"github.com/gin-gonic/gin"
+	"errors"
+	"strconv"
+
 	"github.com/ashsajal1/go-tweet/model"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func CreateTweet(c *gin.Context) {
@@ -24,31 +27,36 @@ func CreateTweet(c *gin.Context) {
 }
 
 func GetTweet(c *gin.Context) {
-    id := c.Param("id")
+	id := c.Param("id")
 
-    var tweet model.Tweet
-    db, err := model.GetDB()
-    if err != nil {
-        c.JSON(500, gin.H{"error": err.Error()})
-        return
-    }
+	var tweet model.Tweet
+	db, err := model.GetDB()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
 
-    // Fetch the tweet
-    result := db.First(&tweet, id)
-    if result.Error != nil {
-        c.JSON(404, gin.H{"error": "Tweet not found"})
-        return
-    }
+	// Validate the tweet ID
+	if _, err := strconv.ParseInt(id, 10, 64); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid tweet ID"})
+		return
+	}
 
-    // Get the likes count for the tweet
-    var likeCount int64
-    db.Model(&model.Like{}).Where("tweet_id = ?", tweet.ID).Count(&likeCount)
+	// Fetch the tweet with its likes count
+	result := db.Preload("Likes").First(&tweet, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			c.JSON(404, gin.H{"error": "Tweet not found"})
+		} else {
+			c.JSON(500, gin.H{"error": "Internal server error"})
+		}
+		return
+	}
 
-    // Prepare the response
-    c.JSON(200, gin.H{
-        "tweet":      tweet,
-        "likes_count": likeCount,
-    })
+	// Prepare the response
+	c.JSON(200, gin.H{
+		"tweet": tweet,
+	})
 }
 
 func GetTweets(c *gin.Context) {
