@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 	"os"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -18,44 +19,29 @@ func RequireAuth(c *gin.Context) {
 		return
 	}
 
-	// Parse the token
+	//remove bearer word
+	tokenString = tokenString[7:]
+
+	// decode/validate jwt
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Verify the signature of the token using the secret key
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
-
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		c.Abort()
 		return
 	}
 
-	// Check if the token is valid
-	if !token.Valid {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+	// check the exp
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		c.Set("user_id", claims["user_id"])
+		c.Next()
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		c.Abort()
 		return
 	}
-
-	// Get the user ID from the token claims
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-		c.Abort()
-		return
-	}
-
-	// Get the user ID from the token claims
-	userID, ok := claims["user_id"].(string)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-		c.Abort()
-		return
-	}
-
-	// Set the user ID in the Gin context
-	c.Set("user_id", userID)
-
-	// Call the next handler
-	c.Next()
 }
