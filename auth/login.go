@@ -19,13 +19,15 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	result := db.Where("email = ?", user.Email).First(&user)
+	var user2 model.User
+
+	result := db.Where("email = ?", user.Email).First(&user2)
 	if result.Error != nil {
 		c.JSON(404, gin.H{"error": "User not found"})
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(user.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user2.Password), []byte(user.Password)); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid credentials"})
 		return
 	}
