@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/golang-jwt/jwt/v5"
 	"time"
+	"os"
 )
 
 func GenerateJWT(userID uint) (string, error) {
@@ -11,6 +12,6 @@ func GenerateJWT(userID uint) (string, error) {
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	tokenString, err := token.SignedString([]byte("secretkey"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	return tokenString, err
 }

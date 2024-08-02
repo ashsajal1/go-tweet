@@ -3,13 +3,15 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/ashsajal1/go-tweet/controller"
-	"github.com/ashsajal1/go-tweet/model"
 	"github.com/ashsajal1/go-tweet/auth"
+	"github.com/ashsajal1/go-tweet/controller"
+	"github.com/ashsajal1/go-tweet/initializers"
+	"github.com/ashsajal1/go-tweet/model"
 )
 
 func init() {
 	model.InitializeDB()
+	initializers.LoadEnv()
 }
 
 func main() {

@@ -2,9 +2,11 @@ package model
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 )
 
 // Global variable for the database connection
@@ -18,11 +20,15 @@ var db *gorm.DB
 func InitializeDB() {
 	// connect with mysql of 3306 port
 	var err error
-	db, err = gorm.Open(mysql.Open("root:@tcp(127.0.0.1:3306)/tweets?parseTime=true"), &gorm.Config{})
+	dsn := os.Getenv("DB_DSN")
+	var err error
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to the database: %v", err)
 	}
 
+	// Create tables if they don't exist
+	db.AutoMigrate(&User{}, &Tweet{}, &Like{})
 	// Auto migrate your models
 	db.AutoMigrate(&Tweet{})
 	db.AutoMigrate(&User{})
@@ -30,13 +36,16 @@ func InitializeDB() {
 
 	// Check if the users table exists
 	if !db.Migrator().HasTable(&User{}) {
+		log.Fatal("users table does not exist")
 		log.Println("users table does not exist")
 	} else {
 		log.Println("users table exists")
 	}
 
+	// Check if the email column exists in the users table
 	// Check if a specific column exists in the users table
 	if !db.Migrator().HasColumn(&User{}, "email") {
+		log.Fatal("email column does not exist in users table")
 		log.Println("email column does not exist in users table")
 	} else {
 		log.Println("email column exists in users table")
@@ -52,4 +61,5 @@ func GetDB() (*gorm.DB, error) {
 	}
 	return db, nil
 }
+
 
