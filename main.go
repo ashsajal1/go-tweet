@@ -15,16 +15,18 @@ func init() {
 func main() {
 	r := gin.Default()
 
-	r.GET("/", func(ctx *gin.Context) {
+	api := r.Group("/api") // Create a new route group for the API
+
+	api.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "Hello, World!",
 		})
 	})
 
-	auth.SetupAuthRouter(r)
-	controller.SetupUserRoute(r)
-	controller.SetupTweetRoute(r)
-	controller.SetupLikeRoute(r)
+	auth.SetupAuthRouter(api)     // Change to use the api group
+	controller.SetupUserRoute(api) // Change to use the api group
+	controller.SetupTweetRoute(api) // Change to use the api group
+	controller.SetupLikeRoute(api)  // Change to use the api group
 
 	r.Run(":8080")
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupLikeRoute(r *gin.Engine) {
+func SetupLikeRoute(r *gin.RouterGroup) {
 	like := r.Group("/like")
 	{
 		like.POST("", CreateLike)
@@ -13,7 +13,7 @@ func SetupLikeRoute(r *gin.Engine) {
 	}
 }
 
-func SetupTweetRoute(r *gin.Engine) {
+func SetupTweetRoute(r *gin.RouterGroup) {
 	tweet := r.Group("/tweet")
 	{
 		tweet.POST("", CreateTweet)
@@ -22,7 +22,7 @@ func SetupTweetRoute(r *gin.Engine) {
 	}
 }
 
-func SetupUserRoute(r *gin.Engine) {
+func SetupUserRoute(r *gin.RouterGroup) {
 	user := r.Group("/user")
 	{
 		user.POST("", CreateUser)
