@@ -3,7 +3,6 @@ package auth
 import (
 	"github.com/ashsajal1/go-tweet/model"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,16 +31,11 @@ func Login(c *gin.Context) {
 	}
 
 	// Generate JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
-	})
-
-	// Sign token with secret key
-	tokenString, err := token.SignedString([]byte("secretkey"))
+	token, err := GenerateJWT(user.ID)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(200, gin.H{"token": tokenString})
+	c.JSON(200, gin.H{"token": token})
 }
