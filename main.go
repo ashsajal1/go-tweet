@@ -10,8 +10,8 @@ import (
 )
 
 func init() {
-	model.InitializeDB()
 	initializers.LoadEnv()
+	model.InitializeDB()
 }
 
 func main() {

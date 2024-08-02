@@ -21,6 +21,7 @@ func InitializeDB() {
 	// connect with mysql of 3306 port
 	var err error
 	dsn := os.Getenv("DB_DSN")
+	fmt.Println(dsn)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to the database: %v", err)
