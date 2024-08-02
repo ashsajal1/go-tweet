@@ -33,7 +33,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Generate JWT token
-	token, err := GenerateJWT(user.ID)
+	token, err := GenerateJWT(user2.ID)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
