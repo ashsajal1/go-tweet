@@ -2,11 +2,14 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+
+	"github.com/ashsajal1/go-tweet/middleware"
 )
 
 func SetupLikeRoute(r *gin.RouterGroup) {
 	like := r.Group("/like")
 	{
+		like.Use(middleware.RequireAuth)
 		like.POST("", CreateLike)
 		like.DELETE("/:id", DeleteLike)
 		like.GET("/:id", GetLike)
