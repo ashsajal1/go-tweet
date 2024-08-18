@@ -33,23 +33,6 @@ func InitializeDB() {
 	db.AutoMigrate(&Tweet{})
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Like{})
-
-	// Check if the users table exists
-	if !db.Migrator().HasTable(&User{}) {
-		log.Fatal("users table does not exist")
-		log.Println("users table does not exist")
-	} else {
-		log.Println("users table exists")
-	}
-
-	// Check if the email column exists in the users table
-	// Check if a specific column exists in the users table
-	if !db.Migrator().HasColumn(&User{}, "email") {
-		log.Fatal("email column does not exist in users table")
-		log.Println("email column does not exist in users table")
-	} else {
-		log.Println("email column exists in users table")
-	}
 }
 
 // GetDB returns the database connection.
