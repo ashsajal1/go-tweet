@@ -25,10 +25,10 @@ func main() {
 		})
 	})
 
-	auth.SetupAuthRouter(api)     // Change to use the api group
-	controller.SetupUserRoute(api) // Change to use the api group
-	controller.SetupTweetRoute(api) // Change to use the api group
-	controller.SetupLikeRoute(api)  // Change to use the api group
+	auth.SetupAuthRouter(api)     
+	controller.SetupUserRoute(api) 
+	controller.SetupTweetRoute(api) 
+	controller.SetupLikeRoute(api)  
 
 	r.Run(":8080")
 }
